@@ -48,9 +48,11 @@ public class Donation {
     @Column(nullable = false)
     private Boolean toHostCompany = false; // True if donated to host company
     
+    @Builder.Default
     @OneToMany(mappedBy = "donation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Statement> statements = new ArrayList<>();
     
+    @Builder.Default
     @OneToMany(mappedBy = "donation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MoneyFlow> moneyFlows = new ArrayList<>();
     
@@ -67,10 +69,10 @@ public class Donation {
         // Allow donations to host company (institution without cause)
         // Or to specific institution/cause
         if (institution == null && cause == null) {
-            throw new IllegalStateException("Donation must have either an institution or a cause");
+            throw new jakarta.validation.ValidationException("Donation must have either an institution or a cause");
         }
         if (institution != null && cause != null) {
-            throw new IllegalStateException("Donation cannot have both institution and cause");
+            throw new jakarta.validation.ValidationException("Donation cannot have both institution and cause");
         }
         // Set toHostCompany flag
         if (institution != null && institution.getIsHostCompany() != null && institution.getIsHostCompany()) {

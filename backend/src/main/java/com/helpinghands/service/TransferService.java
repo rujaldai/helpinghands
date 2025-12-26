@@ -4,6 +4,8 @@ import com.helpinghands.dto.BalanceDTO;
 import com.helpinghands.dto.TransferDTO;
 import com.helpinghands.dto.TransferRequest;
 import com.helpinghands.entity.*;
+import com.helpinghands.exception.InsufficientBalanceException;
+import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,15 +30,15 @@ public class TransferService {
     @Transactional
     public TransferDTO createTransfer(TransferRequest request, Long fromInstitutionId) {
         Institution fromInstitution = institutionRepository.findById(fromInstitutionId)
-                .orElseThrow(() -> new RuntimeException("From institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("From institution", fromInstitutionId));
         
         Institution toInstitution = institutionRepository.findById(request.getToInstitutionId())
-                .orElseThrow(() -> new RuntimeException("To institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("To institution", request.getToInstitutionId()));
         
         // Check available balance
         BalanceDTO balance = balanceService.getBalance(fromInstitutionId);
         if (request.getAmount().compareTo(balance.getAvailableBalance()) > 0) {
-            throw new RuntimeException("Insufficient balance. Available: " + balance.getAvailableBalance());
+            throw new InsufficientBalanceException(balance.getAvailableBalance());
         }
         
         Transfer transfer = Transfer.builder()
@@ -92,14 +94,14 @@ public class TransferService {
             }
             
             if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-                throw new RuntimeException("Insufficient unallocated donations to cover transfer");
+                throw new InsufficientBalanceException(remainingAmount);
             }
         }
     }
     
     public List<TransferDTO> getTransfersByInstitution(Long institutionId) {
         Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new RuntimeException("Institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", institutionId));
         
         List<Transfer> transfers = transferRepository.findByFromInstitution(institution);
         transfers.addAll(transferRepository.findByToInstitution(institution));

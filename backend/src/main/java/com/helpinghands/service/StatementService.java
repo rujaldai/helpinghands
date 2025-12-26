@@ -5,6 +5,8 @@ import com.helpinghands.dto.StatementRequest;
 import com.helpinghands.entity.Donation;
 import com.helpinghands.entity.Statement;
 import com.helpinghands.entity.User;
+import com.helpinghands.exception.ResourceNotFoundException;
+import com.helpinghands.exception.UnauthorizedException;
 import com.helpinghands.repository.DonationRepository;
 import com.helpinghands.repository.StatementRepository;
 import com.helpinghands.repository.UserRepository;
@@ -28,14 +30,14 @@ public class StatementService {
     @Transactional
     public StatementDTO createStatement(StatementRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", userEmail));
         
         Donation donation = donationRepository.findById(request.getDonationId())
-                .orElseThrow(() -> new RuntimeException("Donation not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Donation", request.getDonationId()));
         
         // Verify user owns the donation
         if (!donation.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You can only add statements to your own donations");
+            throw new UnauthorizedException("You can only add statements to your own donations");
         }
         
         Statement statement = Statement.builder()
@@ -56,7 +58,7 @@ public class StatementService {
     
     public List<StatementDTO> getDonationStatements(Long donationId) {
         Donation donation = donationRepository.findById(donationId)
-                .orElseThrow(() -> new RuntimeException("Donation not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Donation", donationId));
         
         return statementRepository.findByDonation(donation).stream()
                 .map(this::mapToDTO)

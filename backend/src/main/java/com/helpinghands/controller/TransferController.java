@@ -2,6 +2,7 @@ package com.helpinghands.controller;
 
 import com.helpinghands.dto.TransferDTO;
 import com.helpinghands.dto.TransferRequest;
+import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.InstitutionRepository;
 import com.helpinghands.service.TransferService;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class TransferController {
     public ResponseEntity<TransferDTO> createTransferFromHost(@Valid @RequestBody TransferRequest request) {
         Long hostCompanyId = institutionRepository.findByIsHostCompanyTrue()
                 .map(institution -> institution.getId())
-                .orElseThrow(() -> new RuntimeException("Host company not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Host company"));
         
         return ResponseEntity.ok(transferService.createTransfer(request, hostCompanyId));
     }

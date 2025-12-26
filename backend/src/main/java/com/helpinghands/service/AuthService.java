@@ -5,6 +5,9 @@ import com.helpinghands.dto.AuthResponse;
 import com.helpinghands.dto.RegisterRequest;
 import com.helpinghands.dto.UserDTO;
 import com.helpinghands.entity.User;
+import com.helpinghands.exception.DuplicateResourceException;
+import com.helpinghands.exception.InvalidCredentialsException;
+import com.helpinghands.exception.InvalidOperationException;
 import com.helpinghands.repository.DonationRepository;
 import com.helpinghands.repository.UserRepository;
 import com.helpinghands.util.JwtUtil;
@@ -26,14 +29,14 @@ public class AuthService {
     
     public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new InvalidCredentialsException());
         
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException();
         }
         
         if (!user.getActive()) {
-            throw new RuntimeException("User account is inactive");
+            throw new InvalidOperationException("User account is inactive");
         }
         
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
@@ -48,7 +51,7 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new DuplicateResourceException("Email", request.getEmail());
         }
         
         User user = User.builder()

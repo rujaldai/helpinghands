@@ -3,6 +3,8 @@ package com.helpinghands.service;
 import com.helpinghands.dto.ExpenseDTO;
 import com.helpinghands.dto.ExpenseRequest;
 import com.helpinghands.entity.*;
+import com.helpinghands.exception.InsufficientBalanceException;
+import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -27,12 +29,12 @@ public class ExpenseService {
     public ExpenseDTO createExpense(ExpenseRequest request) {
         // Get host company
         Institution hostCompany = institutionRepository.findByIsHostCompanyTrue()
-                .orElseThrow(() -> new RuntimeException("Host company not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Host company"));
         
         // Check available balance
         BigDecimal availableBalance = calculateAvailableBalance(hostCompany.getId());
         if (request.getAmount().compareTo(availableBalance) > 0) {
-            throw new RuntimeException("Insufficient balance. Available: " + availableBalance);
+            throw new InsufficientBalanceException(availableBalance);
         }
         
         Expense expense = Expense.builder()
@@ -47,7 +49,7 @@ public class ExpenseService {
         // Set recipient institution if applicable
         if (request.getRecipientInstitutionId() != null) {
             Institution recipientInstitution = institutionRepository.findById(request.getRecipientInstitutionId())
-                    .orElseThrow(() -> new RuntimeException("Recipient institution not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Recipient institution", request.getRecipientInstitutionId()));
             expense.setRecipientInstitution(recipientInstitution);
         }
         
@@ -96,13 +98,13 @@ public class ExpenseService {
         }
         
         if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-            throw new RuntimeException("Insufficient unallocated donations to cover expense");
+            throw new InsufficientBalanceException(remainingAmount);
         }
     }
     
     public List<ExpenseDTO> getExpensesByInstitution(Long institutionId) {
         Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new RuntimeException("Institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", institutionId));
         
         return expenseRepository.findByInstitutionOrderByCreatedAtDesc(institution).stream()
                 .map(this::mapToDTO)
@@ -130,7 +132,7 @@ public class ExpenseService {
     
     private BigDecimal calculateAvailableBalance(Long institutionId) {
         Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new RuntimeException("Institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", institutionId));
         
         // Reload to get fresh data
         institution = institutionRepository.findById(institutionId).orElse(institution);

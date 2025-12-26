@@ -3,6 +3,8 @@ package com.helpinghands.service;
 import com.helpinghands.dto.DonationDTO;
 import com.helpinghands.dto.DonationRequest;
 import com.helpinghands.entity.*;
+import com.helpinghands.exception.ResourceNotFoundException;
+import com.helpinghands.exception.ValidationException;
 import com.helpinghands.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,7 +27,7 @@ public class DonationService {
     @Transactional
     public DonationDTO createDonation(DonationRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", userEmail));
         
         Donation.DonationBuilder builder = Donation.builder()
                 .user(user)
@@ -36,18 +38,18 @@ public class DonationService {
         // If donating to host company
         if (request.getToHostCompany() != null && request.getToHostCompany()) {
             Institution hostCompany = institutionRepository.findByIsHostCompanyTrue()
-                    .orElseThrow(() -> new RuntimeException("Host company not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Host company"));
             builder.institution(hostCompany);
         } else if (request.getInstitutionId() != null) {
             Institution institution = institutionRepository.findById(request.getInstitutionId())
-                    .orElseThrow(() -> new RuntimeException("Institution not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Institution", request.getInstitutionId()));
             builder.institution(institution);
         } else if (request.getCauseId() != null) {
             Cause cause = causeRepository.findById(request.getCauseId())
-                    .orElseThrow(() -> new RuntimeException("Cause not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Cause", request.getCauseId()));
             builder.cause(cause);
         } else {
-            throw new RuntimeException("Either institution, cause, or toHostCompany must be specified");
+            throw new ValidationException("Either institution, cause, or toHostCompany must be specified");
         }
         
         Donation donation = donationRepository.save(builder.build());
@@ -60,9 +62,9 @@ public class DonationService {
         
         if (request.getGuestId() != null && !request.getGuestId().isEmpty()) {
             user = userRepository.findByGuestId(request.getGuestId())
-                    .orElseThrow(() -> new RuntimeException("Guest ID not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Guest user", request.getGuestId()));
         } else {
-            throw new RuntimeException("Guest ID is required for guest donations");
+            throw new ValidationException("Guest ID is required for guest donations");
         }
         
         Donation.DonationBuilder builder = Donation.builder()
@@ -74,18 +76,18 @@ public class DonationService {
         // If donating to host company
         if (request.getToHostCompany() != null && request.getToHostCompany()) {
             Institution hostCompany = institutionRepository.findByIsHostCompanyTrue()
-                    .orElseThrow(() -> new RuntimeException("Host company not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Host company"));
             builder.institution(hostCompany);
         } else if (request.getInstitutionId() != null) {
             Institution institution = institutionRepository.findById(request.getInstitutionId())
-                    .orElseThrow(() -> new RuntimeException("Institution not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Institution", request.getInstitutionId()));
             builder.institution(institution);
         } else if (request.getCauseId() != null) {
             Cause cause = causeRepository.findById(request.getCauseId())
-                    .orElseThrow(() -> new RuntimeException("Cause not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Cause", request.getCauseId()));
             builder.cause(cause);
         } else {
-            throw new RuntimeException("Either institution, cause, or toHostCompany must be specified");
+            throw new ValidationException("Either institution, cause, or toHostCompany must be specified");
         }
         
         Donation donation = donationRepository.save(builder.build());
@@ -94,7 +96,7 @@ public class DonationService {
     
     public List<DonationDTO> getUserDonations(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", userEmail));
         
         return donationRepository.findByUser(user).stream()
                 .map(this::mapToDTO)

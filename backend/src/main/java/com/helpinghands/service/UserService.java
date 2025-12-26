@@ -2,6 +2,8 @@ package com.helpinghands.service;
 
 import com.helpinghands.dto.UserDTO;
 import com.helpinghands.entity.User;
+import com.helpinghands.exception.DuplicateResourceException;
+import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -44,10 +46,10 @@ public class UserService {
     @Transactional
     public UserDTO convertGuestToUser(String guestId, String email, String password, String name) {
         User guest = userRepository.findByGuestId(guestId)
-                .orElseThrow(() -> new RuntimeException("Guest user not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Guest user", guestId));
         
         if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email already exists");
+            throw new DuplicateResourceException("Email", email);
         }
         
         guest.setEmail(email);
@@ -67,7 +69,7 @@ public class UserService {
     
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
         
         if (userDTO.getName() != null) {
             user.setName(userDTO.getName());

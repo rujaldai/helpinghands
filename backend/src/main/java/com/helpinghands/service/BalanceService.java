@@ -2,6 +2,7 @@ package com.helpinghands.service;
 
 import com.helpinghands.dto.BalanceDTO;
 import com.helpinghands.entity.Institution;
+import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.InstitutionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,14 @@ public class BalanceService {
     
     public BalanceDTO getBalance(Long institutionId) {
         Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new RuntimeException("Institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", institutionId));
         
         return calculateBalance(institution);
     }
     
     public BalanceDTO getHostCompanyBalance() {
         Institution hostCompany = institutionRepository.findByIsHostCompanyTrue()
-                .orElseThrow(() -> new RuntimeException("Host company not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Host company"));
         
         return calculateBalance(hostCompany);
     }

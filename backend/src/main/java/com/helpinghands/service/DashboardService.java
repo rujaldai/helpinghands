@@ -23,7 +23,6 @@ public class DashboardService {
     private final InstitutionRepository institutionRepository;
     private final CauseRepository causeRepository;
     private final StatementRepository statementRepository;
-    private final StatementService statementService;
     
     public DashboardStatsDTO getDashboardStats() {
         // Calculate total donations
