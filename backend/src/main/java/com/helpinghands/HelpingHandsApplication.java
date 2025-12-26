@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class HelpingHandsApplication {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(HelpingHandsApplication.class, args);
     }
 }

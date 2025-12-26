@@ -1,6 +1,7 @@
 package com.helpinghands.service;
 
 import com.helpinghands.dto.InstitutionDTO;
+import com.helpinghands.entity.Donation;
 import com.helpinghands.entity.Institution;
 import com.helpinghands.repository.InstitutionRepository;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +66,7 @@ public class InstitutionService {
     private InstitutionDTO mapToDTO(Institution institution) {
         InstitutionDTO dto = modelMapper.map(institution, InstitutionDTO.class);
         BigDecimal total = institution.getDonations().stream()
-                .map(donation -> donation.getAmount())
+                .map(Donation::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         dto.setTotalDonations(total);
         return dto;

@@ -3,6 +3,7 @@ package com.helpinghands.service;
 import com.helpinghands.dto.DashboardStatsDTO;
 import com.helpinghands.dto.StatementDTO;
 import com.helpinghands.entity.Cause;
+import com.helpinghands.entity.Donation;
 import com.helpinghands.entity.Institution;
 import com.helpinghands.entity.User;
 import com.helpinghands.repository.*;
@@ -27,7 +28,7 @@ public class DashboardService {
     public DashboardStatsDTO getDashboardStats() {
         // Calculate total donations
         BigDecimal totalDonations = donationRepository.findAll().stream()
-                .map(donation -> donation.getAmount())
+                .map(Donation::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         // Get counts
