@@ -1,5 +1,6 @@
 package com.helpinghands.dto;
 
+import com.helpinghands.entity.ExpenseCategory;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -7,19 +8,20 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class DonationRequest {
+public class ExpenseRequest {
     @NotNull
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal amount;
     
     private String currency = "USD";
     
-    private Long institutionId;
+    @NotNull
+    private ExpenseCategory category;
     
-    private Long causeId;
+    private String description;
     
-    private Boolean toHostCompany = false; // Donate directly to host company
+    private String recipient; // For DONATION_TO_PERSON
     
-    private String guestId; // For guest donations
+    private Long recipientInstitutionId; // For DONATION_TO_INSTITUTION
 }
 

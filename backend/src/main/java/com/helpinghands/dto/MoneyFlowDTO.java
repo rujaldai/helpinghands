@@ -12,17 +12,18 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DonationDTO {
+public class MoneyFlowDTO {
     private Long id;
+    private Long donationId;
     private Long userId;
     private String userName;
-    private Long institutionId;
-    private String institutionName;
-    private Long causeId;
-    private String causeName;
-    private Boolean toHostCompany;
-    private BigDecimal amount;
+    private BigDecimal donationAmount;
+    private BigDecimal flowAmount;
     private String currency;
+    private Long expenseId;
+    private String expenseDescription;
+    private Long transferId;
+    private String transferDescription;
     private LocalDateTime createdAt;
 }
 

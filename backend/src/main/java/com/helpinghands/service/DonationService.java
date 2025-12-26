@@ -30,9 +30,15 @@ public class DonationService {
         Donation.DonationBuilder builder = Donation.builder()
                 .user(user)
                 .amount(request.getAmount())
-                .currency(request.getCurrency());
+                .currency(request.getCurrency())
+                .toHostCompany(request.getToHostCompany() != null && request.getToHostCompany());
         
-        if (request.getInstitutionId() != null) {
+        // If donating to host company
+        if (request.getToHostCompany() != null && request.getToHostCompany()) {
+            Institution hostCompany = institutionRepository.findByIsHostCompanyTrue()
+                    .orElseThrow(() -> new RuntimeException("Host company not found"));
+            builder.institution(hostCompany);
+        } else if (request.getInstitutionId() != null) {
             Institution institution = institutionRepository.findById(request.getInstitutionId())
                     .orElseThrow(() -> new RuntimeException("Institution not found"));
             builder.institution(institution);
@@ -41,7 +47,7 @@ public class DonationService {
                     .orElseThrow(() -> new RuntimeException("Cause not found"));
             builder.cause(cause);
         } else {
-            throw new RuntimeException("Either institution or cause must be specified");
+            throw new RuntimeException("Either institution, cause, or toHostCompany must be specified");
         }
         
         Donation donation = donationRepository.save(builder.build());
@@ -62,9 +68,15 @@ public class DonationService {
         Donation.DonationBuilder builder = Donation.builder()
                 .user(user)
                 .amount(request.getAmount())
-                .currency(request.getCurrency());
+                .currency(request.getCurrency())
+                .toHostCompany(request.getToHostCompany() != null && request.getToHostCompany());
         
-        if (request.getInstitutionId() != null) {
+        // If donating to host company
+        if (request.getToHostCompany() != null && request.getToHostCompany()) {
+            Institution hostCompany = institutionRepository.findByIsHostCompanyTrue()
+                    .orElseThrow(() -> new RuntimeException("Host company not found"));
+            builder.institution(hostCompany);
+        } else if (request.getInstitutionId() != null) {
             Institution institution = institutionRepository.findById(request.getInstitutionId())
                     .orElseThrow(() -> new RuntimeException("Institution not found"));
             builder.institution(institution);
@@ -73,7 +85,7 @@ public class DonationService {
                     .orElseThrow(() -> new RuntimeException("Cause not found"));
             builder.cause(cause);
         } else {
-            throw new RuntimeException("Either institution or cause must be specified");
+            throw new RuntimeException("Either institution, cause, or toHostCompany must be specified");
         }
         
         Donation donation = donationRepository.save(builder.build());

@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiHome, FiUser, FiHeart, FiUsers, FiTarget, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiUser, FiHeart, FiUsers, FiTarget, FiLogOut, FiDollarSign, FiTrendingUp } from 'react-icons/fi';
 import { FaBuilding } from "react-icons/fa";
 
 interface DashboardLayoutProps {
@@ -21,6 +21,7 @@ const DashboardLayout = ({ admin = false }: DashboardLayoutProps) => {
     { path: '/dashboard', label: 'Dashboard', icon: FiHome },
     { path: '/dashboard/profile', label: 'Profile', icon: FiUser },
     { path: '/dashboard/donations', label: 'My Donations', icon: FiHeart },
+    { path: '/dashboard/money-tracking', label: 'Money Tracking', icon: FiTrendingUp },
   ];
 
   const adminMenuItems = [
@@ -28,6 +29,9 @@ const DashboardLayout = ({ admin = false }: DashboardLayoutProps) => {
     { path: '/admin/users', label: 'Manage Users', icon: FiUsers },
     { path: '/admin/institutions', label: 'Manage Institutions', icon: FaBuilding },
     { path: '/admin/causes', label: 'Manage Causes', icon: FiTarget },
+    { path: '/admin/expenses', label: 'Manage Expenses', icon: FiDollarSign },
+    { path: '/admin/transfers', label: 'Manage Transfers', icon: FiTrendingUp },
+    { path: '/admin/balance', label: 'Balance', icon: FiDollarSign },
   ];
 
   const menuItems = admin ? adminMenuItems : userMenuItems;

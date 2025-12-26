@@ -35,8 +35,24 @@ public class Institution {
     private Boolean active = true;
 
     @Builder.Default
+    @Column(nullable = false)
+    private Boolean isHostCompany = false; // Special flag for host company
+    
+    @Builder.Default
     @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Donation> donations = new ArrayList<>();
+    
+    @Builder.Default
+    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Expense> expenses = new ArrayList<>();
+    
+    @Builder.Default
+    @OneToMany(mappedBy = "fromInstitution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transfer> outgoingTransfers = new ArrayList<>();
+    
+    @Builder.Default
+    @OneToMany(mappedBy = "toInstitution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transfer> incomingTransfers = new ArrayList<>();
     
     @CreatedDate
     @Column(nullable = false, updatable = false)

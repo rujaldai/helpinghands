@@ -1,5 +1,6 @@
 package com.helpinghands.dto;
 
+import com.helpinghands.entity.ExpenseCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,17 +13,17 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DonationDTO {
+public class ExpenseDTO {
     private Long id;
-    private Long userId;
-    private String userName;
     private Long institutionId;
     private String institutionName;
-    private Long causeId;
-    private String causeName;
-    private Boolean toHostCompany;
+    private ExpenseCategory category;
     private BigDecimal amount;
     private String currency;
+    private String description;
+    private String recipient;
+    private Long recipientInstitutionId;
+    private String recipientInstitutionName;
     private LocalDateTime createdAt;
 }
 
