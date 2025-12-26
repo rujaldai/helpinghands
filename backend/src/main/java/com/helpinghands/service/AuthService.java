@@ -5,6 +5,7 @@ import com.helpinghands.dto.AuthResponse;
 import com.helpinghands.dto.RegisterRequest;
 import com.helpinghands.dto.UserDTO;
 import com.helpinghands.entity.User;
+import com.helpinghands.repository.DonationRepository;
 import com.helpinghands.repository.UserRepository;
 import com.helpinghands.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     
     private final UserRepository userRepository;
+    private final DonationRepository donationRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
@@ -57,20 +59,22 @@ public class AuthService {
                 .active(true)
                 .build();
         
+        // Save user first
+        user = userRepository.save(user);
+        final User finalUser = user;
         // If guestId is provided, link guest donations to this user
         if (request.getGuestId() != null && !request.getGuestId().isEmpty()) {
-            final User finalUser = user;
             userRepository.findByGuestId(request.getGuestId())
                     .ifPresent(guest -> {
                         // Transfer donations from guest to new user
                         guest.getDonations().forEach(donation -> {
                             donation.setUser(finalUser);
+                            donationRepository.save(donation);
                         });
+                        // Delete guest user after transferring donations
                         userRepository.delete(guest);
                     });
         }
-        
-        user = userRepository.save(user);
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         
