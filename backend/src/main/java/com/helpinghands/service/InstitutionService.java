@@ -3,6 +3,7 @@ package com.helpinghands.service;
 import com.helpinghands.dto.InstitutionDTO;
 import com.helpinghands.entity.Donation;
 import com.helpinghands.entity.Institution;
+import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.InstitutionRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,7 +29,7 @@ public class InstitutionService {
     
     public InstitutionDTO getInstitutionById(Long id) {
         Institution institution = institutionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", id));
         return mapToDTO(institution);
     }
     
@@ -47,7 +48,7 @@ public class InstitutionService {
     @Transactional
     public InstitutionDTO updateInstitution(Long id, InstitutionDTO institutionDTO) {
         Institution institution = institutionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Institution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", id));
         
         if (institutionDTO.getName() != null) {
             institution.setName(institutionDTO.getName());

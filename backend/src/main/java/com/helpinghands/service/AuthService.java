@@ -5,6 +5,10 @@ import com.helpinghands.dto.AuthResponse;
 import com.helpinghands.dto.RegisterRequest;
 import com.helpinghands.dto.UserDTO;
 import com.helpinghands.entity.User;
+import com.helpinghands.exception.DuplicateResourceException;
+import com.helpinghands.exception.InvalidCredentialsException;
+import com.helpinghands.exception.InvalidOperationException;
+import com.helpinghands.repository.DonationRepository;
 import com.helpinghands.repository.UserRepository;
 import com.helpinghands.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +22,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     
     private final UserRepository userRepository;
+    private final DonationRepository donationRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     
     public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new InvalidCredentialsException());
         
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InvalidCredentialsException();
         }
         
         if (!user.getActive()) {
-            throw new RuntimeException("User account is inactive");
+            throw new InvalidOperationException("User account is inactive");
         }
         
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
@@ -46,7 +51,7 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new DuplicateResourceException("Email", request.getEmail());
         }
         
         User user = User.builder()
@@ -57,20 +62,22 @@ public class AuthService {
                 .active(true)
                 .build();
         
+        // Save user first
+        user = userRepository.save(user);
+        final User finalUser = user;
         // If guestId is provided, link guest donations to this user
         if (request.getGuestId() != null && !request.getGuestId().isEmpty()) {
-            final User finalUser = user;
             userRepository.findByGuestId(request.getGuestId())
                     .ifPresent(guest -> {
                         // Transfer donations from guest to new user
                         guest.getDonations().forEach(donation -> {
                             donation.setUser(finalUser);
+                            donationRepository.save(donation);
                         });
+                        // Delete guest user after transferring donations
                         userRepository.delete(guest);
                     });
         }
-        
-        user = userRepository.save(user);
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         

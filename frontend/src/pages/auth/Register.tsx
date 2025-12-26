@@ -1,25 +1,29 @@
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { FiUserPlus, FiMail, FiLock, FiUser } from 'react-icons/fi';
-import { useEffect } from 'react';
+import { FiUserPlus, FiMail, FiLock, FiUser, FiKey } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
 
 const Register = () => {
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm<{
+  const [showGuestId, setShowGuestId] = useState(false);
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<{
     email: string;
     password: string;
     name: string;
     guestId?: string;
   }>();
 
+  const guestIdValue = watch('guestId');
+
   useEffect(() => {
-    const guestId = localStorage.getItem('guestId');
-    if (guestId) {
-      // Pre-fill guest ID if available
+    const storedGuestId = localStorage.getItem('guestId');
+    if (storedGuestId) {
+      setValue('guestId', storedGuestId);
+      setShowGuestId(true);
     }
-  }, []);
+  }, [setValue]);
 
   const onSubmit = async (data: {
     email: string;
@@ -27,9 +31,10 @@ const Register = () => {
     name: string;
     guestId?: string;
   }) => {
-    const guestId = localStorage.getItem('guestId');
+    // Use form data guestId if provided, otherwise check localStorage
+    const guestId = data.guestId || localStorage.getItem('guestId') || undefined;
     try {
-      await registerUser(data.email, data.password, data.name, guestId || undefined);
+      await registerUser(data.email, data.password, data.name, guestId);
       localStorage.removeItem('guestId');
       navigate('/dashboard');
     } catch (error) {
@@ -100,11 +105,39 @@ const Register = () => {
               )}
             </div>
 
-            {localStorage.getItem('guestId') && (
-              <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
-                <p>Your guest donations will be linked to this account.</p>
-              </div>
-            )}
+            {/* Guest ID Section */}
+            <div>
+              {!showGuestId ? (
+                <button
+                  type="button"
+                  onClick={() => setShowGuestId(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Have a guest ID? Link your previous donations
+                </button>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium mb-2 flex items-center space-x-2">
+                    <FiKey />
+                    <span>Guest ID (Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register('guestId')}
+                    className="input w-full"
+                    placeholder="Enter your guest ID to link previous donations"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    If you made donations as a guest, enter your guest ID here to link them to this account.
+                  </p>
+                  {guestIdValue && (
+                    <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-blue-800">
+                      ✓ Your guest donations will be linked to this account
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             <button type="submit" className="btn btn-primary w-full">
               Register

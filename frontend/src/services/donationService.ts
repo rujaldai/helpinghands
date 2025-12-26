@@ -18,6 +18,7 @@ export interface DonationRequest {
   currency?: string;
   institutionId?: number;
   causeId?: number;
+  toHostCompany?: boolean;
   guestId?: string;
 }
 

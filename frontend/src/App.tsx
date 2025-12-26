@@ -22,6 +22,10 @@ import AdminDashboard from './pages/admin/Dashboard';
 import ManageUsers from './pages/admin/ManageUsers';
 import ManageInstitutions from './pages/admin/ManageInstitutions';
 import ManageCauses from './pages/admin/ManageCauses';
+import ManageExpenses from './pages/admin/ManageExpenses';
+import ManageTransfers from './pages/admin/ManageTransfers';
+import Balance from './pages/admin/Balance';
+import MoneyTracking from './pages/dashboard/MoneyTracking';
 import NotFound from './pages/NotFound';
 
 // Context
@@ -74,6 +78,7 @@ function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="donations" element={<Donations />} />
+                  <Route path="money-tracking" element={<MoneyTracking />} />
                 </Route>
                 
                 {/* Admin Routes */}
@@ -89,6 +94,9 @@ function App() {
                   <Route path="users" element={<ManageUsers />} />
                   <Route path="institutions" element={<ManageInstitutions />} />
                   <Route path="causes" element={<ManageCauses />} />
+                  <Route path="expenses" element={<ManageExpenses />} />
+                  <Route path="transfers" element={<ManageTransfers />} />
+                  <Route path="balance" element={<Balance />} />
                 </Route>
                 
                 {/* 404 Route */}

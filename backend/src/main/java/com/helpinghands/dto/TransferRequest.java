@@ -7,19 +7,16 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class DonationRequest {
+public class TransferRequest {
+    @NotNull
+    private Long toInstitutionId;
+    
     @NotNull
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal amount;
     
     private String currency = "USD";
     
-    private Long institutionId;
-    
-    private Long causeId;
-    
-    private Boolean toHostCompany = false; // Donate directly to host company
-    
-    private String guestId; // For guest donations
+    private String description;
 }
 

@@ -2,6 +2,8 @@ package com.helpinghands.service;
 
 import com.helpinghands.dto.CauseDTO;
 import com.helpinghands.entity.Cause;
+import com.helpinghands.exception.DuplicateResourceException;
+import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.CauseRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -27,14 +29,14 @@ public class CauseService {
     
     public CauseDTO getCauseById(Long id) {
         Cause cause = causeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cause not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cause", id));
         return mapToDTO(cause);
     }
     
     @Transactional
     public CauseDTO createCause(CauseDTO causeDTO) {
         if (causeRepository.findByName(causeDTO.getName()).isPresent()) {
-            throw new RuntimeException("Cause with this name already exists");
+            throw new DuplicateResourceException("Cause", "name '" + causeDTO.getName() + "'");
         }
         
         Cause cause = Cause.builder()
@@ -50,7 +52,7 @@ public class CauseService {
     @Transactional
     public CauseDTO updateCause(Long id, CauseDTO causeDTO) {
         Cause cause = causeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cause not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cause", id));
         
         if (causeDTO.getName() != null) {
             cause.setName(causeDTO.getName());

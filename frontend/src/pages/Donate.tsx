@@ -15,7 +15,7 @@ const Donate = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [donationType, setDonationType] = useState<'institution' | 'cause'>('cause');
+  const [donationType, setDonationType] = useState<'institution' | 'cause' | 'host'>('cause');
   const [guestId, setGuestId] = useState<string>('');
 
   const { data: institutions } = useQuery({
@@ -62,7 +62,11 @@ const Donate = () => {
     const donationData: DonationRequest = {
       amount: data.amount,
       currency: data.currency || 'USD',
-      ...(donationType === 'institution' ? { institutionId: data.institutionId } : { causeId: data.causeId }),
+      ...(donationType === 'host' 
+        ? { toHostCompany: true } 
+        : donationType === 'institution'
+        ? { institutionId: data.institutionId } 
+        : { causeId: data.causeId }),
       ...(!isAuthenticated && { guestId }),
     };
 
@@ -97,11 +101,11 @@ const Donate = () => {
             {/* Donation Type */}
             <div>
               <label className="block text-sm font-medium mb-2">Donation Type</label>
-              <div className="flex space-x-4">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setDonationType('cause')}
-                  className={`flex-1 py-2 px-4 rounded-lg border transition ${
+                  className={`py-2 px-4 rounded-lg border transition ${
                     donationType === 'cause'
                       ? 'bg-primary text-white border-primary'
                       : 'bg-white border-gray-300'
@@ -112,7 +116,7 @@ const Donate = () => {
                 <button
                   type="button"
                   onClick={() => setDonationType('institution')}
-                  className={`flex-1 py-2 px-4 rounded-lg border transition ${
+                  className={`py-2 px-4 rounded-lg border transition ${
                     donationType === 'institution'
                       ? 'bg-primary text-white border-primary'
                       : 'bg-white border-gray-300'
@@ -120,11 +124,30 @@ const Donate = () => {
                 >
                   Institution
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setDonationType('host')}
+                  className={`py-2 px-4 rounded-lg border transition ${
+                    donationType === 'host'
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white border-gray-300'
+                  }`}
+                >
+                  Host Company
+                </button>
               </div>
             </div>
 
-            {/* Institution or Cause Selection */}
-            {donationType === 'institution' ? (
+            {/* Institution, Cause, or Host Company Selection */}
+            {donationType === 'host' ? (
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Donating to Host Company:</strong> Your donation will be managed by the host company
+                  and used for various expenses like clothes, food, and donations to people/institutions.
+                  You can track exactly where your money goes through the transparency system.
+                </p>
+              </div>
+            ) : donationType === 'institution' ? (
               <div>
                 <label className="block text-sm font-medium mb-2">Select Institution</label>
                 <select

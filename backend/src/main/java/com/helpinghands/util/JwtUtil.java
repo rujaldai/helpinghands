@@ -1,5 +1,6 @@
 package com.helpinghands.util;
 
+import com.helpinghands.exception.JwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -49,7 +50,7 @@ public class JwtUtil {
                     .parseClaimsJws(jwt)
                     .getBody();
         } catch (Exception e) {
-            throw new RuntimeException("Invalid JWT token", e);
+            throw new JwtException("Invalid JWT token", e);
         }
     }
     

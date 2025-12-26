@@ -17,6 +17,7 @@ public class InstitutionDTO {
     private String name;
     private String description;
     private Boolean active;
+    private Boolean isHostCompany;
     private BigDecimal totalDonations;
     private LocalDateTime createdAt;
 }

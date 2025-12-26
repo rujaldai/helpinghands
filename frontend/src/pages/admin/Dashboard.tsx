@@ -1,13 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import { dashboardService } from '../../services/dashboardService';
+import { balanceService } from '../../services/balanceService';
 import { FiTrendingUp, FiUsers, FiTarget, FiDollarSign, FiHeart } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { FaBuilding } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: dashboardService.getStats,
+  });
+
+  const { data: hostBalance } = useQuery({
+    queryKey: ['balance', 'host-company'],
+    queryFn: balanceService.getHostCompanyBalance,
   });
 
   const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
@@ -18,6 +25,26 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-8">
+      {/* Host Company Balance Card */}
+      {hostBalance && (
+        <div className="card bg-gradient-to-r from-blue-50 to-purple-50">
+          <div className="card-content">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Host Company Balance</h3>
+                <p className="text-3xl font-bold text-primary">
+                  ${hostBalance.availableBalance.toLocaleString()}
+                </p>
+                <p className="text-sm text-gray-600 mt-1">Available to use</p>
+              </div>
+              <Link to="/admin/balance" className="btn btn-primary">
+                View Details
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="card">
