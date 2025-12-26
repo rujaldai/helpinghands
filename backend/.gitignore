@@ -1,0 +1,58 @@
+# ==============================
+# Maven
+# ==============================
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# ==============================
+# Spring Boot
+# ==============================
+/spring.log
+/*.log
+/*.tmp
+
+# ==============================
+# IntelliJ IDEA
+# ==============================
+.idea/
+*.iml
+*.iws
+out/
+*.ipr
+
+# ==============================
+# Eclipse
+# ==============================
+.settings/
+*.classpath
+*.project
+
+# ==============================
+# OS Files
+# ==============================
+.DS_Store
+Thumbs.db
+*.swp
+
+# ==============================
+# Maven Wrapper
+# ==============================
+.mvn/wrapper/maven-wrapper.jar
+
+# ==============================
+# Logs / temp files
+# ==============================
+*.log
+*.tmp
+
+# ==============================
+# Node (if frontend exists)
+# ==============================
+node_modules/
+dist/
+.env
