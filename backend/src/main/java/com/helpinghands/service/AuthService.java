@@ -29,13 +29,13 @@ public class AuthService {
     
     public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InvalidCredentialsException());
+                .orElseThrow(InvalidCredentialsException::new);
         
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException();
         }
         
-        if (!user.getActive()) {
+        if (!user.isActive()) {
             throw new InvalidOperationException("User account is inactive");
         }
         

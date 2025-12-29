@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiHeart, FiDollarSign } from 'react-icons/fi';
 
 const Donate = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [donationType, setDonationType] = useState<'institution' | 'cause' | 'host'>('cause');

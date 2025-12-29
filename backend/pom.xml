@@ -11,11 +11,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-
-    <artifactId>backend</artifactId>
+    <artifactId>helping-hands</artifactId>
     <name>helping-hands-backend</name>
     <groupId>com.helpinghands</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>

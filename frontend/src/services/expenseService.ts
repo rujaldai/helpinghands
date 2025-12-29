@@ -1,12 +1,6 @@
 import api from './api';
+import type {ExpenseCategory} from "./expenseCategory.ts";
 
-export enum ExpenseCategory {
-  CLOTHES = 'CLOTHES',
-  FOOD = 'FOOD',
-  DONATION_TO_PERSON = 'DONATION_TO_PERSON',
-  DONATION_TO_INSTITUTION = 'DONATION_TO_INSTITUTION',
-  OTHER = 'OTHER',
-}
 
 export interface Expense {
   id: number;

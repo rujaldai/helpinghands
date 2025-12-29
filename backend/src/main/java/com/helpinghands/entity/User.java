@@ -42,7 +42,7 @@ public class User {
     
     @Builder.Default
     @Column(nullable = false)
-    private Boolean active = true;
+    private boolean active = true;
     
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
