@@ -25,6 +25,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 300M
 #    container_name: helping-hands-app
     depends_on:
       mysql:
