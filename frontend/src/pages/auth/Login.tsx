@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
-import toast from 'react-hot-toast';
 
 const Login = () => {
   const { login } = useAuth();

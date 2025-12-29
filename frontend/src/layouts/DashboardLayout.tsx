@@ -35,7 +35,7 @@ const DashboardLayout = ({ admin = false }: DashboardLayoutProps) => {
   ];
 
   const menuItems = admin ? adminMenuItems : userMenuItems;
-  const basePath = admin ? '/admin' : '/dashboard';
+  // const basePath = admin ? '/admin' : '/dashboard';
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { dashboardService } from '../../services/dashboardService';
 import { donationService } from '../../services/donationService';
 import { useAuth } from '../../context/AuthContext';
-import { FiTrendingUp, FiUsers, FiTarget, FiDollarSign, FiHeart } from 'react-icons/fi';
+import { FiTrendingUp, FiUsers, FiDollarSign, FiHeart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {

@@ -1,0 +1,10 @@
+export const EXPENSE_CATEGORIES = {
+    CLOTHES: 'CLOTHES',
+    FOOD: 'FOOD',
+    DONATION_TO_PERSON: 'DONATION_TO_PERSON',
+    DONATION_TO_INSTITUTION: 'DONATION_TO_INSTITUTION',
+    OTHER: 'OTHER',
+} as const;
+
+export type ExpenseCategory =
+    typeof EXPENSE_CATEGORIES[keyof typeof EXPENSE_CATEGORIES];
