@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { dashboardService } from '../services/dashboardService';
-import { FiHeart, FiTrendingUp, FiUsers, FiTarget } from 'react-icons/fi';
+import { FiHeart, FiUsers, FiTarget } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const Home = () => {
@@ -112,7 +112,7 @@ const Home = () => {
                         outerRadius={100}
                         label
                       >
-                        {stats.topCauses.slice(0, 5).map((entry, index) => (
+                        {stats.topCauses.slice(0, 5).map((_entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

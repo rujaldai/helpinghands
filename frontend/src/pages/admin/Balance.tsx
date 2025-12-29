@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { balanceService } from '../../services/balanceService';
-import { FiDollarSign, FiTrendingUp, FiTrendingDown, FiArrowRight } from 'react-icons/fi';
+import { FiDollarSign} from 'react-icons/fi';
 
 const Balance = () => {
   const { data: hostBalance, isLoading: hostLoading } = useQuery({

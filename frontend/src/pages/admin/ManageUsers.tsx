@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userService } from '../../services/userService';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { FiEdit, FiUser, FiCheck, FiX } from 'react-icons/fi';
+import { FiEdit, FiCheck, FiX } from 'react-icons/fi';
 
 const ManageUsers = () => {
   const queryClient = useQueryClient();

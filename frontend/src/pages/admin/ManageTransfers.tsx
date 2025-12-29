@@ -4,7 +4,7 @@ import { institutionService } from '../../services/institutionService';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { FiPlus, FiArrowRight, FiDollarSign } from 'react-icons/fi';
+import { FiPlus, FiArrowRight} from 'react-icons/fi';
 
 const ManageTransfers = () => {
   const queryClient = useQueryClient();

@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: helping-hands-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: helpinghands
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: helping-hands-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: helping-hands-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/helpinghands
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: apppass
+    restart: unless-stopped
+  frontend:
+    image: helping-hands:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: helping-hands-frontend
+    ports:
+      - "8081:80"
+      - "8082:8080"
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

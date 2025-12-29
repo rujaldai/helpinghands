@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { expenseService, ExpenseCategory } from '../../services/expenseService';
+import { expenseService } from '../../services/expenseService';
+import {EXPENSE_CATEGORIES} from "../../services/expenseCategory.ts";
+import type {ExpenseCategory} from "../../services/expenseCategory.ts";
 import { institutionService } from '../../services/institutionService';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -54,11 +56,11 @@ const ManageExpenses = () => {
       description: data.description,
     };
 
-    if (data.category === ExpenseCategory.DONATION_TO_PERSON && data.recipient) {
+    if (data.category === EXPENSE_CATEGORIES.DONATION_TO_PERSON && data.recipient) {
       expenseData.recipient = data.recipient;
     }
 
-    if (data.category === ExpenseCategory.DONATION_TO_INSTITUTION && data.recipientInstitutionId) {
+    if (data.category === EXPENSE_CATEGORIES.DONATION_TO_INSTITUTION && data.recipientInstitutionId) {
       expenseData.recipientInstitutionId = data.recipientInstitutionId;
     }
 
@@ -67,13 +69,13 @@ const ManageExpenses = () => {
 
   const getCategoryIcon = (category: ExpenseCategory) => {
     switch (category) {
-      case ExpenseCategory.CLOTHES:
+      case EXPENSE_CATEGORIES.CLOTHES:
         return <FiShoppingBag />;
-      case ExpenseCategory.FOOD:
+      case EXPENSE_CATEGORIES.FOOD:
         return '🍔';
-      case ExpenseCategory.DONATION_TO_PERSON:
+      case EXPENSE_CATEGORIES.DONATION_TO_PERSON:
         return <FiUsers />;
-      case ExpenseCategory.DONATION_TO_INSTITUTION:
+      case EXPENSE_CATEGORIES.DONATION_TO_INSTITUTION:
         return <FaBuilding />;
       default:
         return <FiDollarSign />;
@@ -114,11 +116,11 @@ const ManageExpenses = () => {
                   className="input w-full"
                 >
                   <option value="">Select category...</option>
-                  <option value={ExpenseCategory.CLOTHES}>Clothes</option>
-                  <option value={ExpenseCategory.FOOD}>Food</option>
-                  <option value={ExpenseCategory.DONATION_TO_PERSON}>Donation to Person</option>
-                  <option value={ExpenseCategory.DONATION_TO_INSTITUTION}>Donation to Institution</option>
-                  <option value={ExpenseCategory.OTHER}>Other</option>
+                  <option value={EXPENSE_CATEGORIES.CLOTHES}>Clothes</option>
+                  <option value={EXPENSE_CATEGORIES.FOOD}>Food</option>
+                  <option value={EXPENSE_CATEGORIES.DONATION_TO_PERSON}>Donation to Person</option>
+                  <option value={EXPENSE_CATEGORIES.DONATION_TO_INSTITUTION}>Donation to Institution</option>
+                  <option value={EXPENSE_CATEGORIES.OTHER}>Other</option>
                 </select>
                 {errors.category && (
                   <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
@@ -160,7 +162,7 @@ const ManageExpenses = () => {
                 />
               </div>
 
-              {selectedCategory === ExpenseCategory.DONATION_TO_PERSON && (
+              {selectedCategory === EXPENSE_CATEGORIES.DONATION_TO_PERSON && (
                 <div>
                   <label className="block text-sm font-medium mb-2">Recipient Name</label>
                   <input
@@ -172,7 +174,7 @@ const ManageExpenses = () => {
                 </div>
               )}
 
-              {selectedCategory === ExpenseCategory.DONATION_TO_INSTITUTION && (
+              {selectedCategory === EXPENSE_CATEGORIES.DONATION_TO_INSTITUTION && (
                 <div>
                   <label className="block text-sm font-medium mb-2">Recipient Institution</label>
                   <select

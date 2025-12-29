@@ -3,7 +3,7 @@ import { institutionService } from '../../services/institutionService';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiEdit} from 'react-icons/fi';
 import { FaBuilding } from "react-icons/fa";
 
 const ManageInstitutions = () => {

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { moneyFlowService } from '../../services/moneyFlowService';
-import { FiDollarSign, FiShoppingBag, FiArrowRight, FiUsers } from 'react-icons/fi';
+import { FiDollarSign, FiShoppingBag, FiArrowRight} from 'react-icons/fi';
 
 const MoneyTracking = () => {
   const { user } = useAuth();
