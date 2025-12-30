@@ -44,11 +44,11 @@ public class JwtUtil {
     
     private Claims extractAllClaims(String jwt) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())   // NEW
                     .build()
-                    .parseClaimsJws(jwt)
-                    .getBody();
+                    .parseSignedClaims(jwt)
+                    .getPayload();
         } catch (Exception e) {
             throw new JwtException("Invalid JWT token", e);
         }

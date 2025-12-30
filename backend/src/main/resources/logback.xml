@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <springProperty name="APP_NAME" source="spring.application.name"/>
+    <springProperty scope="context" name="appName" source="spring.application.name" />
+    <springProperty scope="context" name="orgName" source="spring.application.org" />
+    <property name="HOST" value="${HOSTNAME:-unknown}"/>
+
+    <!-- Log file location -->
+    <property name="LOG_PATH" value="logs"/>
+    <property name="LOG_FILE" value="${LOG_PATH}/application.log"/>
+
+    <!-- ========================= -->
+    <!-- LOKI APPENDER -->
+    <!-- ========================= -->
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <labels>
+            app=${appName:-helpinghands-backend}
+            level=%level
+            logger=%logger{36}
+            host=${HOSTNAME:-unknown}
+            traceId=%X{traceId}
+            spanId=%X{spanId}
+        </labels>
+        <structuredMetadata>off</structuredMetadata>
+        <message>
+            <pattern>%-5level [%X{traceId:-},%X{spanId:-}] [%thread] %logger{20} - %msg%n</pattern>
+        </message>
+        <http>
+            <url>http://localhost:3100/loki/api/v1/push</url>
+<!--            <useProtobufApi>true</useProtobufApi>-->
+<!--            <sender class="com.github.loki4j.logback.ApacheHttpSender" />-->
+            <requestTimeoutMs>10000</requestTimeoutMs>
+        </http>
+        <batch>
+            <maxItems>100</maxItems>
+            <timeoutMs>10000</timeoutMs>
+        </batch>
+        <verbose>true</verbose>
+    </appender>
+
+    <!-- Async wrapper (recommended) -->
+    <appender name="ASYNC_LOKI" class="ch.qos.logback.classic.AsyncAppender">
+<!--        <queueSize>10000</queueSize>-->
+        <queueSize>10</queueSize>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="LOKI"/>
+    </appender>
+
+    <!-- ========================= -->
+    <!-- CONSOLE APPENDER (optional but recommended) -->
+    <!-- ========================= -->
+<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [${appName},%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n </pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+    <!-- ========================= -->
+    <!-- ROOT LOGGER -->
+    <!-- ========================= -->
+    <root level="INFO">
+<!--        <appender-ref ref="CONSOLE"/>-->
+        <appender-ref ref="FILE"/>
+<!--        <appender-ref ref="ASYNC_LOKI"/>-->
+        <appender-ref ref="LOKI"/>
+    </root>
+
+</configuration>

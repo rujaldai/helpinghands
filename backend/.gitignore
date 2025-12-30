@@ -52,6 +52,7 @@ Thumbs.db
 
 # ==============================
 # Node (if frontend exists)
+# Node (if frontend exists)
 # ==============================
 node_modules/
 dist/
