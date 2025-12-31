@@ -59,6 +59,7 @@ management:
       probability: 1.0
     export:
       zipkin:
+        endpoint: http://tempo:9411/api/v2/spans #zipkin url
         enabled: true # not sure if this is even required (Too Tired to Test)
   observations:
     key-values:

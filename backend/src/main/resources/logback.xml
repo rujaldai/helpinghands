@@ -27,7 +27,7 @@
             <pattern>%-5level [%X{traceId:-},%X{spanId:-}] [%thread] %logger{20} - %msg%n</pattern>
         </message>
         <http>
-            <url>http://localhost:3100/loki/api/v1/push</url>
+            <url>http://loki:3100/loki/api/v1/push</url>
 <!--            <useProtobufApi>true</useProtobufApi>-->
 <!--            <sender class="com.github.loki4j.logback.ApacheHttpSender" />-->
             <requestTimeoutMs>10000</requestTimeoutMs>
