@@ -31,12 +31,13 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/users/guest/**").permitAll()
                 .requestMatchers("/api/institutions").permitAll()
@@ -48,6 +49,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/statements").permitAll()
                 .requestMatchers("/api/statements/**").permitAll()
                 .requestMatchers("/api/dashboard/**").permitAll()
+                .requestMatchers("/api/money-flows/**").permitAll()
                 .requestMatchers("/api/users/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )

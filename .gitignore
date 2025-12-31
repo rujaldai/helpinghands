@@ -1,0 +1,8 @@
+monitoring/docker/loki/loki-data/
+monitoring/docker/prometheus/prometheus-data/
+monitoring/docker/tempo/tempo-data/
+
+*.DS_Store
+
+.idea/
+backend/.idea/
