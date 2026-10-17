@@ -6,3 +6,4 @@ monitoring/docker/tempo/tempo-data/
 
 .idea/
 backend/.idea/
+backend/logs/

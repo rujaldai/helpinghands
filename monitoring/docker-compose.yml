@@ -80,6 +80,17 @@ services:
     networks:
       - app_network
       - observability
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    networks:
+      - observability
+      - app_network
+    volumes:
+      - ../k6/scripts:/scripts
+    environment:
+      - K6_OUT=experimental-prometheus-rw
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
 
 networks:
   app_network: # Custom network for container communication
