@@ -1,8 +1,8 @@
 package com.helpinghands.service;
 
 import com.helpinghands.dto.MoneyFlowDTO;
-import com.helpinghands.entity.MoneyFlow;
-import com.helpinghands.repository.MoneyFlowRepository;
+import com.helpinghands.entity.DonationLedger;
+import com.helpinghands.repository.DonationLedgerRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -14,43 +14,43 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MoneyFlowService {
     
-    private final MoneyFlowRepository moneyFlowRepository;
+    private final DonationLedgerRepository donationLedgerRepository;
     private final ModelMapper modelMapper;
     
     public List<MoneyFlowDTO> getMoneyFlowsByUserId(Long userId) {
-        return moneyFlowRepository.findByUserId(userId).stream()
+        return donationLedgerRepository.findByUserId(userId).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
     
     public List<MoneyFlowDTO> getMoneyFlowsByDonationId(Long donationId) {
-        return moneyFlowRepository.findAll().stream()
+        return donationLedgerRepository.findAll().stream()
                 .filter(mf -> mf.getDonation().getId().equals(donationId))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
     
     public List<MoneyFlowDTO> getAllMoneyFlows() {
-        return moneyFlowRepository.findAll().stream()
+        return donationLedgerRepository.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
     
-    private MoneyFlowDTO mapToDTO(MoneyFlow moneyFlow) {
-        MoneyFlowDTO dto = modelMapper.map(moneyFlow, MoneyFlowDTO.class);
-        dto.setDonationId(moneyFlow.getDonation().getId());
-        dto.setUserId(moneyFlow.getDonation().getUser().getId());
-        dto.setUserName(moneyFlow.getDonation().getUser().getName());
-        dto.setDonationAmount(moneyFlow.getDonation().getAmount());
+    private MoneyFlowDTO mapToDTO(DonationLedger donationLedger) {
+        MoneyFlowDTO dto = modelMapper.map(donationLedger, MoneyFlowDTO.class);
+        dto.setDonationId(donationLedger.getDonation().getId());
+        dto.setUserId(donationLedger.getDonation().getUser().getId());
+        dto.setUserName(donationLedger.getDonation().getUser().getName());
+        dto.setDonationAmount(donationLedger.getDonation().getAmount());
         
-        if (moneyFlow.getExpense() != null) {
-            dto.setExpenseId(moneyFlow.getExpense().getId());
-            dto.setExpenseDescription(moneyFlow.getExpense().getDescription());
+        if (donationLedger.getExpense() != null) {
+            dto.setExpenseId(donationLedger.getExpense().getId());
+            dto.setExpenseDescription(donationLedger.getExpense().getDescription());
         }
         
-        if (moneyFlow.getTransfer() != null) {
-            dto.setTransferId(moneyFlow.getTransfer().getId());
-            dto.setTransferDescription(moneyFlow.getTransfer().getDescription());
+        if (donationLedger.getTransfer() != null) {
+            dto.setTransferId(donationLedger.getTransfer().getId());
+            dto.setTransferDescription(donationLedger.getTransfer().getDescription());
         }
         
         return dto;

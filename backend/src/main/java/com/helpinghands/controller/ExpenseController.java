@@ -24,7 +24,7 @@ public class ExpenseController {
     
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ExpenseDTO> createExpense(@Valid @RequestBody ExpenseRequest request) {
+    public ResponseEntity<ExpenseDTO> transferMoney(@Valid @RequestBody ExpenseRequest request) {
         logger.info("Creating new expense for institution: {}", request.getRecipientInstitutionId());
         ExpenseDTO expense = expenseService.createExpense(request);
         logger.info("Successfully created expense with ID: {}", expense.getId());

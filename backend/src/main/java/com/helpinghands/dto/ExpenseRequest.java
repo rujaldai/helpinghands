@@ -1,6 +1,7 @@
 package com.helpinghands.dto;
 
-import com.helpinghands.entity.ExpenseCategory;
+import com.helpinghands.enums.ExpenseCategory;
+import com.helpinghands.enums.Currency;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,7 +14,7 @@ public class ExpenseRequest {
     @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private BigDecimal amount;
     
-    private String currency = "USD";
+    private Currency currency = Currency.USD;
     
     @NotNull
     private ExpenseCategory category;

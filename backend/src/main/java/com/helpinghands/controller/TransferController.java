@@ -2,6 +2,7 @@ package com.helpinghands.controller;
 
 import com.helpinghands.dto.TransferDTO;
 import com.helpinghands.dto.TransferRequest;
+import com.helpinghands.entity.Institution;
 import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.InstitutionRepository;
 import com.helpinghands.service.TransferService;
@@ -18,7 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/transfers")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class TransferController {
     
     private static final Logger logger = LoggerFactory.getLogger(TransferController.class);
@@ -30,7 +30,7 @@ public class TransferController {
     public ResponseEntity<TransferDTO> createTransferFromHost(@Valid @RequestBody TransferRequest request) {
         logger.info("Creating transfer from host company");
         Long hostCompanyId = institutionRepository.findByIsHostCompanyTrue()
-                .map(institution -> institution.getId())
+                .map(Institution::getId)
                 .orElseThrow(() -> {
                     logger.error("Host company not found");
                     return new ResourceNotFoundException("Host company");

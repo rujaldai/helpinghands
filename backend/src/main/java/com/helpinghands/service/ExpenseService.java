@@ -22,7 +22,7 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final InstitutionRepository institutionRepository;
     private final DonationRepository donationRepository;
-    private final MoneyFlowRepository moneyFlowRepository;
+    private final DonationLedgerRepository donationLedgerRepository;
     private final ModelMapper modelMapper;
     
     @Transactional
@@ -75,9 +75,9 @@ public class ExpenseService {
             }
             
             // Calculate how much of this donation is already used
-            BigDecimal usedAmount = donation.getMoneyFlows().stream()
+            BigDecimal usedAmount = donation.getDonationLedgers().stream()
                     .filter(mf -> mf.getExpense() != null)
-                    .map(MoneyFlow::getAmount)
+                    .map(DonationLedger::getAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             
             BigDecimal availableFromDonation = donation.getAmount().subtract(usedAmount);
@@ -85,14 +85,14 @@ public class ExpenseService {
             if (availableFromDonation.compareTo(BigDecimal.ZERO) > 0) {
                 BigDecimal amountToUse = availableFromDonation.min(remainingAmount);
                 
-                MoneyFlow moneyFlow = MoneyFlow.builder()
+                DonationLedger donationLedger = DonationLedger.builder()
                         .donation(donation)
                         .expense(expense)
                         .amount(amountToUse)
                         .currency(donation.getCurrency())
                         .build();
                 
-                moneyFlowRepository.save(moneyFlow);
+                donationLedgerRepository.save(donationLedger);
                 remainingAmount = remainingAmount.subtract(amountToUse);
             }
         }

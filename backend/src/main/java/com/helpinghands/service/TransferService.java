@@ -5,9 +5,11 @@ import com.helpinghands.dto.TransferDTO;
 import com.helpinghands.dto.TransferRequest;
 import com.helpinghands.entity.*;
 import com.helpinghands.exception.InsufficientBalanceException;
+import com.helpinghands.exception.InvalidTransferException;
 import com.helpinghands.exception.ResourceNotFoundException;
 import com.helpinghands.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +20,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TransferService {
     
     private final TransferRepository transferRepository;
     private final InstitutionRepository institutionRepository;
     private final DonationRepository donationRepository;
-    private final MoneyFlowRepository moneyFlowRepository;
+    private final DonationLedgerRepository donationLedgerRepository;
     private final BalanceService balanceService;
     private final ModelMapper modelMapper;
     
@@ -31,16 +34,21 @@ public class TransferService {
     public TransferDTO createTransfer(TransferRequest request, Long fromInstitutionId) {
         Institution fromInstitution = institutionRepository.findById(fromInstitutionId)
                 .orElseThrow(() -> new ResourceNotFoundException("From institution", fromInstitutionId));
-        
+
         Institution toInstitution = institutionRepository.findById(request.getToInstitutionId())
                 .orElseThrow(() -> new ResourceNotFoundException("To institution", request.getToInstitutionId()));
-        
+
+        if (fromInstitution.equals(toInstitution)) {
+            log.error("Can not transfer to the same institution: {}", toInstitution.getName());
+            throw new InvalidTransferException("Can not transfer to the same institution");
+        }
+
         // Check available balance
         BalanceDTO balance = balanceService.getBalance(fromInstitutionId);
         if (request.getAmount().compareTo(balance.getAvailableBalance()) > 0) {
             throw new InsufficientBalanceException(balance.getAvailableBalance());
         }
-        
+
         Transfer transfer = Transfer.builder()
                 .fromInstitution(fromInstitution)
                 .toInstitution(toInstitution)
@@ -48,51 +56,51 @@ public class TransferService {
                 .currency(request.getCurrency())
                 .description(request.getDescription())
                 .build();
-        
+
         transfer = transferRepository.save(transfer);
-        
+
         // Create money flows - track which donations were used for this transfer
         createMoneyFlowsForTransfer(transfer, request.getAmount(), fromInstitution);
-        
+
         return mapToDTO(transfer);
     }
     
     private void createMoneyFlowsForTransfer(Transfer transfer, BigDecimal transferAmount, Institution fromInstitution) {
         // If transferring from host company, track which user donations were used
-        if (fromInstitution.getIsHostCompany() != null && fromInstitution.getIsHostCompany()) {
+        if (fromInstitution.isHostCompany()) {
             List<Donation> hostCompanyDonations = donationRepository.findAll().stream()
                     .filter(d -> d.getToHostCompany() != null && d.getToHostCompany())
                     .collect(Collectors.toList());
-            
+
             BigDecimal remainingAmount = transferAmount;
-            
+
             for (Donation donation : hostCompanyDonations) {
                 if (remainingAmount.compareTo(BigDecimal.ZERO) <= 0) {
                     break;
                 }
-                
+
                 // Calculate how much of this donation is already used (expenses + transfers)
-                BigDecimal usedAmount = donation.getMoneyFlows().stream()
-                        .map(MoneyFlow::getAmount)
+                BigDecimal usedAmount = donation.getDonationLedgers().stream()
+                        .map(DonationLedger::getAmount)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
-                
+
                 BigDecimal availableFromDonation = donation.getAmount().subtract(usedAmount);
-                
+
                 if (availableFromDonation.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal amountToUse = availableFromDonation.min(remainingAmount);
-                    
-                    MoneyFlow moneyFlow = MoneyFlow.builder()
+
+                    DonationLedger donationLedger = DonationLedger.builder()
                             .donation(donation)
                             .transfer(transfer)
                             .amount(amountToUse)
                             .currency(donation.getCurrency())
                             .build();
-                    
-                    moneyFlowRepository.save(moneyFlow);
+
+                    donationLedgerRepository.save(donationLedger);
                     remainingAmount = remainingAmount.subtract(amountToUse);
                 }
             }
-            
+
             if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
                 throw new InsufficientBalanceException(remainingAmount);
             }

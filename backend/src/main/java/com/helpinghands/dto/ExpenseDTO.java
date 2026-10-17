@@ -1,6 +1,7 @@
 package com.helpinghands.dto;
 
-import com.helpinghands.entity.ExpenseCategory;
+import com.helpinghands.enums.ExpenseCategory;
+import com.helpinghands.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class ExpenseDTO {
     private String institutionName;
     private ExpenseCategory category;
     private BigDecimal amount;
-    private String currency;
+    private Currency currency;
     private String description;
     private String recipient;
     private Long recipientInstitutionId;

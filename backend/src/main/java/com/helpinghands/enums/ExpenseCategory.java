@@ -1,4 +1,4 @@
-package com.helpinghands.entity;
+package com.helpinghands.enums;
 
 public enum ExpenseCategory {
     CLOTHES,

@@ -1,5 +1,6 @@
 package com.helpinghands.dto;
 
+import com.helpinghands.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class DonationDTO {
     private String causeName;
     private Boolean toHostCompany;
     private BigDecimal amount;
-    private String currency;
+    private Currency currency;
     private LocalDateTime createdAt;
 }
 

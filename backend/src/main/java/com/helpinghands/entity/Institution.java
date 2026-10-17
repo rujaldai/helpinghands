@@ -36,7 +36,7 @@ public class Institution {
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean isHostCompany = false; // Special flag for host company
+    private boolean isHostCompany = false; // Special flag for host company
     
     @Builder.Default
     @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, orphanRemoval = true)
