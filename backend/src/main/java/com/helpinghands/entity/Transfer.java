@@ -1,5 +1,6 @@
 package com.helpinghands.entity;
 
+import com.helpinghands.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,14 +39,15 @@ public class Transfer {
     
     @Builder.Default
     @Column(nullable = false)
-    private String currency = "USD";
+    @Enumerated(EnumType.STRING)
+    private Currency currency = Currency.USD;
     
     @Column(columnDefinition = "TEXT")
     private String description;
     
     @OneToMany(mappedBy = "transfer", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<MoneyFlow> moneyFlows = new ArrayList<>();
+    private List<DonationLedger> donationLedgers = new ArrayList<>();
     
     @CreatedDate
     @Column(nullable = false, updatable = false)

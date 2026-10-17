@@ -1,5 +1,6 @@
 package com.helpinghands.dto;
 
+import com.helpinghands.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class MoneyFlowDTO {
     private String userName;
     private BigDecimal donationAmount;
     private BigDecimal flowAmount;
-    private String currency;
+    private Currency currency;
     private Long expenseId;
     private String expenseDescription;
     private Long transferId;
